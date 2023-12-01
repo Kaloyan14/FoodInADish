@@ -1,6 +1,7 @@
 package bg.smg;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
@@ -22,22 +23,47 @@ public class FoodInADish<T> extends DrawableObject implements Comparable<FoodInA
         return 0;
     }
 
+    public FoodInADish() {
+        food = (T) new Food();
+        dishColor = "";
+    }
+
+    public FoodInADish(T food, String dishColor) {
+        this.food = food;
+        this.dishColor = dishColor;
+    }
+
     @Override
     public String toString() {
         return "A " + food + "in a " + dishColor + " dish";
     }
 
     @Override
-    public void draw() {
+    public JPanel draw() {
+        JPanel panel = new JPanel();
         BufferedImage img = null;
         try {
-            img = ImageIO.read(new File("resource/" + ((Food) food).getName()));
+            img = ImageIO.read(new File("resource/" + ((Food) food).getName() + ".png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
         Graphics g = img.getGraphics();
-        g.drawImage(img, getxCoord(), getyCoord(), getWidth(), getHeight(), (ImageObserver) this);
+        g.drawImage(img, getxCoord(), getyCoord(), getWidth(), getHeight(), panel);
+        panel.paint(g);
+
+        try {
+            img = ImageIO.read(new File("resource/" + dishColor + ".png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        g = img.getGraphics();
+        g.drawImage(img, getxCoord(), getyCoord(), getWidth(), getHeight(), panel);
+        panel.paint(g);
+        panel.repaint();
+        return panel;
     }
+
+
 
     public T getFood() {
         return food;

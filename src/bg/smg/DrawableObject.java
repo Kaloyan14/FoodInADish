@@ -1,12 +1,21 @@
 package bg.smg;
 
+import javax.swing.*;
+
 public abstract class DrawableObject {
     private int xCoord;
     private int yCoord;
     private int width;
     private int height;
 
-    public abstract void draw();
+    public DrawableObject() {
+        xCoord = 100;
+        yCoord = 100;
+        width = 100;
+        height = 100;
+    }
+
+    public abstract JPanel draw();
 
     public int getxCoord() {
         return xCoord;
