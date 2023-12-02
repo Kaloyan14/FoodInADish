@@ -1,12 +1,7 @@
 package bg.smg;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.awt.image.ImageObserver;
-import java.io.File;
-import java.io.IOException;
 
 public class FoodInADish<T> extends DrawableObject implements Comparable<FoodInADish<T>>{
     private T food;
@@ -14,17 +9,17 @@ public class FoodInADish<T> extends DrawableObject implements Comparable<FoodInA
     @Override
     public int compareTo(FoodInADish<T> o) {
         if(food instanceof Food && o.getFood() instanceof Food) {
-            if(food instanceof Fruit && o.getFood() instanceof Vegetable) return 1;
-            else if(food instanceof Vegetable && o.getFood() instanceof Food) return -1;
+            if(food instanceof Fruit && o.getFood() instanceof Vegetable) return -1;
+            else if(food instanceof Vegetable && o.getFood() instanceof Fruit) return 1;
             else {
-                return (int)(((Food) food).getKg() - ((Food) o.getFood()).getKg());
+                return Double.compare(((Food) food).getKg(), ((Food) o.getFood()).getKg());
             }
         }
         return 0;
     }
 
     public FoodInADish() {
-        food = (T) new Food();
+        food = null;
         dishColor = "";
     }
 
@@ -40,30 +35,18 @@ public class FoodInADish<T> extends DrawableObject implements Comparable<FoodInA
 
     @Override
     public JPanel draw() {
-        JPanel panel = new JPanel();
-        BufferedImage img = null;
-        try {
-            img = ImageIO.read(new File("resource/" + ((Food) food).getName() + ".png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        Graphics g = img.getGraphics();
-        g.drawImage(img, getxCoord(), getyCoord(), getWidth(), getHeight(), panel);
-        panel.paint(g);
+        ImageIcon foodIcon = new ImageIcon("resource/" + ((Food) food).getName() + ".png");
+        ImageIcon dishIcon = new ImageIcon("resource/" + dishColor + ".png");
+        return new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
 
-        try {
-            img = ImageIO.read(new File("resource/" + dishColor + ".png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        g = img.getGraphics();
-        g.drawImage(img, getxCoord(), getyCoord(), getWidth(), getHeight(), panel);
-        panel.paint(g);
-        panel.repaint();
-        return panel;
+                dishIcon.paintIcon(this, g, getxCoord(), getyCoord() + 50);
+                foodIcon.paintIcon(this, g, getxCoord(), getyCoord());
+            }
+        };
     }
-
-
 
     public T getFood() {
         return food;
